@@ -6,7 +6,7 @@ import { Moon, Settings, RotateCcw, X, Key, Bot, Save } from 'lucide-react';
 export default function Header() {
     // States
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-    const [provider, setProvider] = useState('google');
+    const [model, setModel] = useState('gemini-2.5-flash');
     const [apiKey, setApiKey] = useState('');
 
     return (
@@ -91,37 +91,22 @@ export default function Header() {
                 {/* Sheet Content (Forms) */}
                 <div className="p-6 flex-1 overflow-y-auto space-y-6 bg-white">
 
-                    {/* Provider & Model Selection */}
+                    {/* Only ONE Dropdown for Model Selection */}
                     <div className="space-y-4">
                         <div>
                             <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
                                 <Bot className="w-4 h-4 mr-2 text-teal-600" />
-                                Nhà cung cấp & Model
+                                Phiên bản Gemini
                             </label>
                             <select
-                                value={provider}
-                                onChange={(e) => setProvider(e.target.value)}
+                                value={model}
+                                onChange={(e) => setModel(e.target.value)}
                                 className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors"
                             >
-                                <option value="google">Google Gemini (Khuyên dùng)</option>
-                                <option value="openai">OpenAI (ChatGPT)</option>
-                            </select>
-                        </div>
-
-                        {/* Model Dropdown based on Provider */}
-                        <div>
-                            <select className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors">
-                                {provider === 'google' ? (
-                                    <>
-                                        <option value="gemini-2.5-flash">Gemini 2.5 Flash (Nhanh, Rẻ)</option>
-                                        <option value="gemini-2.5-pro">Gemini 2.5 Pro (Thông minh nhất)</option>
-                                    </>
-                                ) : (
-                                    <>
-                                        <option value="gpt-4o-mini">GPT-4o Mini</option>
-                                        <option value="gpt-4o">GPT-4o</option>
-                                    </>
-                                )}
+                                <option value="models/gemini-2.5-flash">Gemini 2.5 Flash</option>
+                                <option value="models/gemini-2.5-pro">Gemini 2.5 Pro</option>
+                                <option value="models/gemini-3-flash-preview">Gemini 3.0 Flash</option>
+                                <option value="models/gemini-3-pro-preview">Gemini 3.0 Pro</option>
                             </select>
                         </div>
                     </div>
@@ -139,7 +124,7 @@ export default function Header() {
                         </p>
                         <input
                             type="password"
-                            placeholder={provider === 'google' ? "Nhập Google AI Studio Key..." : "Nhập OpenAI API Key..."}
+                            placeholder="Nhập Google AI Studio Key..."
                             value={apiKey}
                             onChange={(e) => setApiKey(e.target.value)}
                             className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors"
@@ -147,12 +132,12 @@ export default function Header() {
 
                         {/* Helper link to get API key */}
                         <a
-                            href={provider === 'google' ? "https://aistudio.google.com/app/apikey" : "https://platform.openai.com/api-keys"}
+                            href="https://aistudio.google.com/app/apikey"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-block mt-3 text-[11px] font-medium text-blue-600 hover:text-blue-800 hover:underline"
                         >
-                            &rarr; Nhấn vào đây để lấy {provider === 'google' ? 'Gemini API Key' : 'OpenAI API Key'} miễn phí
+                            &rarr; Nhấn vào đây để lấy Gemini API Key miễn phí
                         </a>
                     </div>
 
@@ -162,7 +147,8 @@ export default function Header() {
                 <div className="p-4 border-t border-gray-100 bg-gray-50">
                     <button
                         onClick={() => {
-                            // Later: Add logic here to save to localStorage
+                            localStorage.setItem('ai_model', model);
+                            localStorage.setItem('ai_apiKey', apiKey);
                             setIsSettingsOpen(false);
                         }}
                         className="w-full bg-teal-600 hover:bg-teal-700 text-white py-2.5 rounded-xl font-medium shadow-sm transition-colors flex items-center justify-center"

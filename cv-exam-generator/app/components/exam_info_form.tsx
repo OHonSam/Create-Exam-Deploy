@@ -5,7 +5,7 @@ import { Clock, Upload, File as FileIcon, X, Loader2, Sparkles } from 'lucide-re
 
 // Received properties from parent ExamGeneratorUI
 interface ExamInfoFormProps {
-    onProcessSuccess: () => void;
+    onProcessSuccess: (extractedData: any) => void;
 }
 
 export default function ExamInfoForm({ onProcessSuccess }: ExamInfoFormProps) {
@@ -18,6 +18,13 @@ export default function ExamInfoForm({ onProcessSuccess }: ExamInfoFormProps) {
 
     // Ref to programmatically click the hidden file input
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+
+    const [subject, setSubject] = useState('');
+    const [grade, setGrade] = useState('');
+    const [examType, setExamType] = useState('');
+    const [duration, setDuration] = useState('45');
+
 
     // --- Drag and Drop Handlers ---
     const handleDragOver = (e: React.DragEvent) => {
@@ -67,17 +74,45 @@ export default function ExamInfoForm({ onProcessSuccess }: ExamInfoFormProps) {
         }
     };
 
-    const handleExtractData = (e: React.MouseEvent) => {
+    const handleExtractData = async (e: React.MouseEvent) => {
         e.stopPropagation();
 
         if (!uploadedFile) { return; }
 
+        const apiKey = localStorage.getItem('ai_apiKey') || '';
+        const model = localStorage.getItem('ai_model') || 'gemini-2.5-flash';
+
+        if (!apiKey) {
+            alert("Vui lòng vào 'Cài đặt' để nhập API Key trước khi trích xuất.");
+            return;
+        }
+
         setIsProcessing(true);
-        // Simulate sending the PDF to Gemini API (Takes 1.5 seconds)
-        setTimeout(() => {
+
+        try {
+            const formData = new FormData();
+            formData.append('file', uploadedFile);
+            formData.append('apiKey', apiKey);
+            formData.append('model', model);
+            formData.append('subject', subject);
+            formData.append('grade', grade);
+            formData.append('examType', examType);
+            formData.append('duration', duration);
+            const response = await fetch('/api/extract', {
+                method: 'POST',
+                body: formData
+            });
+            if (!response.ok) throw new Error("API Call Failed");
+
+            const result = await response.json();
+
+            // 3. Pass the REAL data up to the parent!
+            onProcessSuccess(result.data);
+        } catch (error) {
+            console.error("Upload failed", error);
+        } finally {
             setIsProcessing(false);
-            onProcessSuccess(); // Tell the parent component we are done!
-        }, 15);
+        }
     }
 
     return (
@@ -102,7 +137,11 @@ export default function ExamInfoForm({ onProcessSuccess }: ExamInfoFormProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-8">
                 <div>
                     <label className="block text-sm font-medium text-teal-700 mb-2">Môn học</label>
-                    <select className="w-full border border-gray-200 rounded-xl px-4 py-3 text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors appearance-none">
+                    <select
+                        className="w-full border border-gray-200 rounded-xl px-4 py-3 text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors appearance-none"
+                        value={subject}
+                        onChange={(e) => setSubject(e.target.value)}
+                    >
                         <option>-- Chọn môn học --</option>
                         <option>Toán học</option>
                         <option>Vật lý</option>
@@ -112,17 +151,25 @@ export default function ExamInfoForm({ onProcessSuccess }: ExamInfoFormProps) {
 
                 <div>
                     <label className="block text-sm font-medium text-teal-700 mb-2">Khối lớp</label>
-                    <select className="w-full border border-gray-200 rounded-xl px-4 py-3 text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors appearance-none">
+                    <select className="w-full border border-gray-200 rounded-xl px-4 py-3 text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors appearance-none"
+                        value={grade}
+                        onChange={(e) => setGrade(e.target.value)}
+                    >
                         <option>-- Chọn khối lớp --</option>
                         <option>Khối 10</option>
                         <option>Khối 11</option>
                         <option>Khối 12</option>
                     </select>
+
                 </div>
 
                 <div>
                     <label className="block text-sm font-medium text-teal-700 mb-2">Loại kiểm tra (Auto Filter)</label>
-                    <select className="w-full border border-gray-200 rounded-xl px-4 py-3 text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors appearance-none">
+                    <select className="w-full border border-gray-200 rounded-xl px-4 py-3 text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors appearance-none"
+                        value={examType}
+                        onChange={(e) => setExamType(e.target.value)}
+                    >
+                        <option>-- Chọn loại kiểm tra --</option>
                         <option>Giữa kỳ 1</option>
                         <option>Cuối kỳ 1</option>
                         <option>Giữa kỳ 2</option>
@@ -138,13 +185,13 @@ export default function ExamInfoForm({ onProcessSuccess }: ExamInfoFormProps) {
                         </div>
                         <input
                             type="number"
-                            defaultValue="45"
+                            value={duration}
+                            onChange={(e) => setDuration(e.target.value)}
                             className="w-full border border-gray-200 rounded-xl pl-11 pr-4 py-3 text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors"
                         />
                     </div>
                 </div>
             </div>
-
             {/* --- INTERACTIVE UPLOAD DROPZONE --- */}
             <div
                 onDragOver={handleDragOver}

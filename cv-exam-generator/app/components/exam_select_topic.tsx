@@ -28,28 +28,46 @@ const mockGeminiData = [
   }
 ];
 
-export default function TopicSelection() {
+interface Lesson {
+  id: string;
+  lessonName: string;
+  periods: number;
+  week: string;
+}
+
+interface Chapter {
+  id: string;
+  chapterName: string;
+  totalPeriods: number;
+  lessons: Lesson[];
+}
+
+interface TopicSelectionProps {
+  data: Chapter[];
+}
+
+export default function TopicSelection({ data }: TopicSelectionProps) {
   // State to track which chapters are expanded/collapsed
   const [expandedChapters, setExpandedChapters] = useState<string[]>(['c1', 'c2']);
-  
+
   // State to track which lessons are checked
   const [selectedLessons, setSelectedLessons] = useState<string[]>(['l1', 'l2', 'l3', 'l4', 'l5', 'l6', 'l7']);
 
   const toggleChapter = (chapterId: string) => {
-    setExpandedChapters(prev => 
+    setExpandedChapters(prev =>
       prev.includes(chapterId) ? prev.filter(id => id !== chapterId) : [...prev, chapterId]
     );
   };
 
   const toggleLesson = (lessonId: string) => {
-    setSelectedLessons(prev => 
+    setSelectedLessons(prev =>
       prev.includes(lessonId) ? prev.filter(id => id !== lessonId) : [...prev, lessonId]
     );
   };
 
   return (
     <div className="bg-white rounded-2xl shadow-sm p-8 mt-8">
-      
+
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
@@ -66,21 +84,21 @@ export default function TopicSelection() {
 
       {/* Topics List */}
       <div className="border border-teal-100 rounded-xl overflow-hidden bg-[#fbfdfc]">
-        {mockGeminiData.map((chapter, index) => {
+        {data.map((chapter, index) => {
           const isExpanded = expandedChapters.includes(chapter.id);
-          
+
           return (
             <div key={chapter.id} className={`${index !== 0 ? 'border-t border-teal-50' : ''}`}>
-              
+
               {/* Chapter Header row */}
               <div className="flex items-center p-4 hover:bg-teal-50/50 transition-colors">
                 <button onClick={() => toggleChapter(chapter.id)} className="mr-2 text-gray-400 hover:text-teal-600">
                   {isExpanded ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
                 </button>
-                
+
                 {/* Checkbox for Chapter (Mocked as always checked for this UI) */}
                 <CheckSquare className="w-5 h-5 text-blue-600 mr-3 rounded" />
-                
+
                 <span className="font-semibold text-teal-900 flex-1">{chapter.chapterName}</span>
                 <span className="text-xs font-medium bg-teal-100 text-teal-700 px-2.5 py-1 rounded-full">
                   {chapter.totalPeriods} tiết
@@ -94,18 +112,18 @@ export default function TopicSelection() {
                     const isSelected = selectedLessons.includes(lesson.id);
                     return (
                       <div key={lesson.id} className="flex items-center py-2.5 pl-14 pr-4 hover:bg-teal-50/30 transition-colors group cursor-pointer" onClick={() => toggleLesson(lesson.id)}>
-                        
+
                         {/* Lesson Checkbox */}
                         {isSelected ? (
                           <CheckSquare className="w-5 h-5 text-blue-600 mr-3" />
                         ) : (
                           <Square className="w-5 h-5 text-gray-300 mr-3 group-hover:border-blue-400" />
                         )}
-                        
+
                         <span className={`text-sm flex-1 ${isSelected ? 'text-teal-800' : 'text-slate-500'}`}>
                           {lesson.lessonName}
                         </span>
-                        
+
                         {/* Badges */}
                         <div className="flex items-center gap-2">
                           <span className="text-[11px] font-medium bg-green-50 text-green-600 border border-green-100 px-2 py-0.5 rounded">

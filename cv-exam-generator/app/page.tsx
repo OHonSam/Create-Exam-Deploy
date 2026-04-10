@@ -12,7 +12,7 @@ import TopicSelection from './components/exam_select_topic';
 
 export default function ExamGeneratorUI() {
   // We will use this state later to track which files have been uploaded
-  const [isPdfProcessed, setIsPdfProcessed] = useState(false);
+  const [extractedFormData, setExtractedFormData] = useState<any[] | null>(null);
 
   return (
 
@@ -37,13 +37,13 @@ export default function ExamGeneratorUI() {
 
         {/* Section 1: Always visible */}
         <ExamInfoForm
-          onProcessSuccess={() => setIsPdfProcessed(true)}
+          onProcessSuccess={(data) => setExtractedFormData(data)}
         />
 
-        {/* Section 2: Only renders when isPdfProcessed is TRUE */}
-        {isPdfProcessed && (
+        {/* Section 2: Only renders when extractedFormData is available */}
+        {extractedFormData && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out">
-            <TopicSelection />
+            <TopicSelection data={extractedFormData} />
           </div>
         )}
 
