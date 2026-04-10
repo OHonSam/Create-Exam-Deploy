@@ -1,29 +1,26 @@
 Goal: Create a Next.js application that allows users to upload their custom in PDF format, extracts the text, and generates a technical/high school exam based on the content using a Large Language Model (LLM) like Google Gemini via API key.
 
+
 # Step 1: Set Up Your Environment
 1. **Install VS Code**: Download and install Visual Studio Code from [code.visualstudio.com](https://code.visualstudio.com/). 
 1. **Create a Vercel Account**: Sign up at [Vercel](https://vercel.com/).
 2. **Install Node.js**: Download and install Node.js from [nodejs.org](https://nodejs.org/). Choose the LTS version for stability then choose Windows Installer.
 
+
 # Step 2: Initialize the Project
 Start by creating a new Next.js application. Open your terminal and run:
 
-
+```bash
 npx create-next-app@latest cv-exam-generator
 cd cv-exam-generator
 npm install pdf-parse @google/genai form-data
 npm install lucide-react
+```
 
 
 # Step 3: Build the Frontend User Interface
-You need a simple page where users can upload their PDF and view the generated questions.
-Create an upload form in app/page.tsx:
-
-Add a file input element (<input type="file" accept="application/pdf" />).
-
-Add a submit button with a loading state.
-
-Create a section to map over and display the generated questions once the API returns a response.
+cv-exam-generator\app\components: contains UI components.
+cv-exam-generator\app\page.tsx: the main page.
 
 
 # Step 4: Implement Document Processing
