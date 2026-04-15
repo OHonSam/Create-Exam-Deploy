@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
 
-interface ExamStructureMatrixProps {
-    // You can define props here if needed, e.g. initial matrix data
-    onChange?: (matrix: any) => void;
+export interface MatrixRow {
+    id: string;
+    label: string;
+    values: number[];
 }
 
-export default function ExamStructureMatrix({ onChange }: ExamStructureMatrixProps) {
+interface ExamStructureMatrixProps {
+    initialConfig?: MatrixRow[];
+    onChange?: (matrix: MatrixRow[]) => void;
+}
+
+export default function ExamStructureMatrix({ initialConfig, onChange }: ExamStructureMatrixProps) {
     const cols = ['Biết', 'Hiểu', 'Vận dụng', 'VD cao'];
-    const [rows, setRows] = useState([
-        { id: 'I', label: 'Dạng I (4 lựa chọn)', values: [8, 4, 0, 0] },
-        { id: 'II', label: 'Dạng II (Đúng/Sai)', values: [1, 1, 0, 0] },
-        { id: 'III', label: 'Dạng III (Trả lời ngắn)', values: [1, 1, 2, 0] },
-        { id: 'TL', label: 'Tự luận', values: [0, 0, 0, 0] },
-    ]);
+    const [rows, setRows] = useState(initialConfig || []);
 
     useEffect(() => {
         onChange?.(rows);

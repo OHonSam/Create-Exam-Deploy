@@ -17,6 +17,13 @@ export default function ExamGeneratorUI() {
   const [maxUnlockedStep, setMaxUnlockedStep] = useState<number>(1);
 
   // Global Data State (Shared across steps)
+  const [selectedLessonIds, setSelectedLessonIds] = useState<string[]>([]);
+  const [matrixConfig, setMatrixConfig] = useState<any>([
+    { id: 'I', label: 'Dạng I (4 lựa chọn)', values: [8, 4, 0, 0] },
+    { id: 'II', label: 'Dạng II (Đúng/Sai)', values: [1, 1, 0, 0] },
+    { id: 'III', label: 'Dạng III (Trả lời ngắn)', values: [1, 1, 2, 0] },
+    { id: 'TL', label: 'Tự luận', values: [0, 0, 0, 0] },
+  ]);
   const [extractedFormData, setExtractedFormData] = useState<any[] | null>(null);
   const [generatedHtml, setGeneratedHtml] = useState<string>('');
 
@@ -57,6 +64,10 @@ export default function ExamGeneratorUI() {
               setGeneratedHtml(html);
               handleNextPageStep();
             }}
+            selectedLessonIds={selectedLessonIds}
+            setSelectedLessonIds={setSelectedLessonIds}
+            matrixConfig={matrixConfig}
+            setMatrixConfig={setMatrixConfig}
           />
         )}
 

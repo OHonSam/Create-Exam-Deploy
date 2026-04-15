@@ -20,10 +20,11 @@ interface Chapter {
 
 interface TopicSelectionProps {
   data: Chapter[];
+  initialSelectedLessonIds: string[];
   onSelectionChange?: (selectedIds: string[]) => void;
 }
 
-export default function TopicSelection({ data, onSelectionChange }: TopicSelectionProps) {
+export default function TopicSelection({ data, initialSelectedLessonIds, onSelectionChange }: TopicSelectionProps) {
   // State to track which chapters are expanded/collapsed
   const [expandedChapters, setExpandedChapters] = useState<string[]>(
     data.map(c => c.id)
@@ -31,9 +32,14 @@ export default function TopicSelection({ data, onSelectionChange }: TopicSelecti
 
   // State to track which lessons are checked
   const [selectedChapters, setSelectedChapters] = useState<string[]>([]);
-  const [selectedLessons, setSelectedLessons] = useState<string[]>([]);
+  const [selectedLessons, setSelectedLessons] = useState<string[]>(initialSelectedLessonIds || []);
 
   useEffect(() => {
+    // If there are initial selected lesson IDs, use them to set the state
+    if (initialSelectedLessonIds?.length > 0) {
+      setSelectedLessons(initialSelectedLessonIds);
+      return;
+    }
     const defaultSelected: string[] = [];
     data.forEach(chapter => {
       chapter.lessons.forEach(lesson => {

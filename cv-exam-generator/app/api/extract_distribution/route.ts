@@ -27,52 +27,52 @@ export async function POST(request: Request) {
         // 3. Send to Gemini using the srompt we engineered earlier
         const prompt = `Bạn là một hệ thống AI chuyên nghiệp xử lý dữ liệu giáo dục. Nhiệm vụ của bạn là phân tích đoạn text được trích xuất từ tài liệu Phân phối chương trình (PPCT) và chuyển đổi thành một mảng JSON tuân thủ nghiêm ngặt cấu trúc quy định.
 
-THÔNG TIN NGỮ CẢNH:
-- Môn học: ${subject}
-- Khối lớp: ${grade}
-- Loại kỳ thi: ${examType}
-- Thời lượng: ${duration} phút
-Hãy sử dụng ngữ cảnh này để nhận diện tên chương và bài học cần được chọn hợp lý, chính xác hơn.
+        THÔNG TIN NGỮ CẢNH:
+        - Môn học: ${subject}
+        - Khối lớp: ${grade}
+        - Loại kỳ thi: ${examType}
+        - Thời lượng: ${duration} phút
+        Hãy sử dụng ngữ cảnh này để nhận diện tên chương và bài học cần được chọn hợp lý, chính xác hơn.
 
-QUY TẮC XỬ LÝ (QUAN TRỌNG):
-1. Trích xuất toàn bộ: Trích xuất TOÀN BỘ các chương và bài học có trong tài liệu PPCT mà không bỏ sót. Nhóm chính gán thành \`chapterName\`.
-2. Khắc phục lỗi ngắt dòng: Ghép các dòng text bị đứt gãy thành một \`lessonName\` trôi chảy, logic.
-3. ID duy nhất: Khởi tạo \`id\` tự động (Chương bắt đầu bằng "c", Bài học bắt đầu bằng "l").
-4. Đánh giá độ phù hợp (selected): Dựa vào THÔNG TIN NGỮ CẢNH, hãy suy luận những bài học nào nằm trong phạm vi ôn thi hợp lý và thiết lập trường \`selected: true\`. Các bài học nằm ngoài phạm vi ngữ cảnh (ví dụ: bài học của học kỳ 2 nhưng kỳ thi là Giữa kỳ 1) thì thiết lập \`selected: false\`.
-5. Phân bổ tiết & tuần: Lấy chính xác số tiết (\`periods\`) và chuỗi thời gian tuần học (\`week\`).
-6. Định dạng đầu ra: TRẢ VỀ DUY NHẤT ĐỊNH DẠNG JSON. Xin đừng trả về markdown blocks, không giải thích.
+        QUY TẮC XỬ LÝ (QUAN TRỌNG):
+        1. Trích xuất toàn bộ: Trích xuất TOÀN BỘ các chương và bài học có trong tài liệu PPCT mà không bỏ sót. Nhóm chính gán thành \`chapterName\`.
+        2. Khắc phục lỗi ngắt dòng: Ghép các dòng text bị đứt gãy thành một \`lessonName\` trôi chảy, logic.
+        3. ID duy nhất: Khởi tạo \`id\` tự động (Chương bắt đầu bằng "c", Bài học bắt đầu bằng "l").
+        4. Đánh giá độ phù hợp (selected): Dựa vào THÔNG TIN NGỮ CẢNH, hãy suy luận những bài học nào nằm trong phạm vi ôn thi hợp lý và thiết lập trường \`selected: true\`. Các bài học nằm ngoài phạm vi ngữ cảnh (ví dụ: bài học của học kỳ 2 nhưng kỳ thi là Giữa kỳ 1) thì thiết lập \`selected: false\` nhưng không được bỏ sót bài học ngoài phạm vi.
+        5. Phân bổ tiết & tuần: Lấy chính xác số tiết (\`periods\`) và chuỗi thời gian tuần học (\`week\`).
+        6. Định dạng đầu ra: TRẢ VỀ DUY NHẤT ĐỊNH DẠNG JSON. Xin đừng trả về markdown blocks, không giải thích.
 
-CẤU TRÚC JSON BẮT BUỘC:
-[
-  {
-    "id": "c1",
-    "subject": "Tên môn học",
-    "chapterName": "Tên chương / Chủ đề 1",
-    "totalPeriods": 4,
-    "lessons": [
-      {
-        "id": "l1",
-        "lessonName": "Tên bài học hoặc nội dung chi tiết 1",
-        "periods": 2,
-        "week": "Tuần 1",
-        "selected": true
-      },
-      {
-        "id": "l2",
-        "lessonName": "Tên bài học hoặc nội dung ngoài phạm vi thi",
-        "periods": 2,
-        "week": "Tuần 15",
-        "selected": false
-      }
-    ]
-  }
-]
+        CẤU TRÚC JSON BẮT BUỘC:
+        [
+          {
+            "id": "c1",
+            "subject": "Tên môn học",
+            "chapterName": "Tên chương / Chủ đề 1",
+            "totalPeriods": 4,
+            "lessons": [
+              {
+                "id": "l1",
+                "lessonName": "Tên bài học hoặc nội dung chi tiết 1",
+                "periods": 2,
+                "week": "Tuần 1",
+                "selected": true
+              },
+              {
+                "id": "l2",
+                "lessonName": "Tên bài học hoặc nội dung ngoài phạm vi thi",
+                "periods": 2,
+                "week": "Tuần 15",
+                "selected": false
+              }
+            ]
+          }
+        ]
 
-DỮ LIỆU PPCT ĐẦU VÀO:
-"""
-${pdfText}
-"""
-`;
+        DỮ LIỆU PPCT ĐẦU VÀO:
+        """
+        ${pdfText}
+        """
+        `;
 
         const response = await ai.models.generateContent({
             model: model,

@@ -12,16 +12,23 @@ interface Step1Props {
     extractedFormData: any[] | null;
     setExtractedFormData: (data: any[] | null) => void;
     onMatrixGenerated: (html: string) => void;
+    selectedLessonIds: string[];
+    setSelectedLessonIds: (ids: string[]) => void;
+    matrixConfig: any;
+    setMatrixConfig: (config: any) => void;
 }
 
 export default function Step1Info({
     extractedFormData,
     setExtractedFormData,
-    onMatrixGenerated
+    onMatrixGenerated,
+    selectedLessonIds,
+    setSelectedLessonIds,
+    matrixConfig,
+    setMatrixConfig
+
 }: Step1Props) {
     // Local State specific to Step 1
-    const [selectedLessonIds, setSelectedLessonIds] = useState<string[]>([]);
-    const [matrixConfig, setMatrixConfig] = useState<any>(null);
     const [isGeneratingMatrix, setIsGeneratingMatrix] = useState(false);
 
     // The Generate API Call
@@ -93,13 +100,17 @@ export default function Step1Info({
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out">
                     <TopicSelection
                         data={extractedFormData}
+                        initialSelectedLessonIds={selectedLessonIds}
                         onSelectionChange={setSelectedLessonIds}
                     />
                 </div>
             )}
 
             {/* Component 3: Matrix Configuration */}
-            <ExamStructureMatrix onChange={setMatrixConfig} />
+            <ExamStructureMatrix
+                initialConfig={matrixConfig}
+                onChange={setMatrixConfig}
+            />
 
             {/* Submit Button */}
             <div className="flex justify-end mt-6">
