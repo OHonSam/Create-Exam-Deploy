@@ -43,8 +43,11 @@ export default function TopicSelection({ data, onSelectionChange }: TopicSelecti
       });
     });
     setSelectedLessons(defaultSelected);
-    onSelectionChange?.(defaultSelected);
   }, [data]);
+
+  useEffect(() => {
+    onSelectionChange?.(selectedLessons);
+  }, [selectedLessons, onSelectionChange]);
 
   const toggleChapterView = (chapterId: string) => {
     setExpandedChapters(prev =>
@@ -55,7 +58,7 @@ export default function TopicSelection({ data, onSelectionChange }: TopicSelecti
   const toggleLesson = (lessonId: string) => {
     setSelectedLessons(prev => {
       const newSelected = prev.includes(lessonId) ? prev.filter(id => id !== lessonId) : [...prev, lessonId];
-      onSelectionChange?.(newSelected);
+
       return newSelected;
     });
   };
@@ -71,9 +74,8 @@ export default function TopicSelection({ data, onSelectionChange }: TopicSelecti
       // If none or some are selected, select them all
       setSelectedLessons(prev => {
         const newSelected = new Set([...prev, ...lessonIds]);
-        const finalArr = Array.from(newSelected);
-        onSelectionChange?.(finalArr); // <--- NOTIFY PARENT
-        return finalArr;
+        // REMOVED onSelectionChange from here
+        return Array.from(newSelected);
       });
     }
   };

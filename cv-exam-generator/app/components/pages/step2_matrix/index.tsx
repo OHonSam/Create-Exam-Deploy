@@ -1,14 +1,17 @@
+// app/components/pages/step2_matrix/index.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
 import { Upload, FileText, Download, ArrowRight, Code } from 'lucide-react';
 
-interface ExamMatrixPageStepProps {
+interface Step2Props {
   htmlData: string;
   onNext: () => void;
+  // onBack? means it is optional
+  onBack?: () => void;
 }
 
-export default function ExamMatrixPageStep({ htmlData, onNext }: ExamMatrixPageStepProps) {
+export default function Step2Matrix({ htmlData, onNext, onBack }: Step2Props) {
   // Store the HTML locally so the user can manually edit the code if they want to
   const [localHtml, setLocalHtml] = useState(htmlData || '');
 
@@ -30,10 +33,10 @@ export default function ExamMatrixPageStep({ htmlData, onNext }: ExamMatrixPageS
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500 ease-out">
       {/* Header & Actions */}
       <div className="bg-white rounded-2xl shadow-sm p-4 px-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        
+
         <div className="flex items-center">
           <div className="w-8 h-8 rounded-full bg-[#147a63] text-white flex items-center justify-center font-bold mr-3 ring-[6px] ring-[#147a63]/10">
             2
@@ -46,21 +49,21 @@ export default function ExamMatrixPageStep({ htmlData, onNext }: ExamMatrixPageS
             <Upload className="w-4 h-4 mr-2" />
             Upload Ma trận
           </button>
-          
+
           <button className="flex items-center text-sm font-medium text-slate-700 border border-slate-300 rounded-xl px-4 py-2 hover:bg-slate-50 transition-colors">
             <FileText className="w-4 h-4 mr-2" />
             Tải Word (.doc)
           </button>
-          
-          <button 
+
+          <button
             onClick={handleDownloadHtml}
             className="flex items-center text-sm font-medium text-slate-700 border border-slate-300 rounded-xl px-4 py-2 hover:bg-slate-50 transition-colors"
           >
             <Download className="w-4 h-4 mr-2" />
             Tải HTML
           </button>
-          
-          <button 
+
+          <button
             onClick={onNext}
             className="flex items-center text-sm font-medium text-white bg-[#147a63] hover:bg-teal-800 rounded-xl px-5 py-2.5 transition-colors shadow-sm"
           >
@@ -72,7 +75,7 @@ export default function ExamMatrixPageStep({ htmlData, onNext }: ExamMatrixPageS
 
       {/* Side-by-Side Panels */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[650px]">
-        
+
         {/* Left Panel: Source Code */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col border border-slate-200">
           <div className="bg-slate-50 border-b border-slate-200 p-3 px-5 flex items-center">
@@ -95,9 +98,9 @@ export default function ExamMatrixPageStep({ htmlData, onNext }: ExamMatrixPageS
           </div>
           <div className="flex-1 overflow-hidden bg-white">
             {/* iframe safely renders the full document including <head> <style> rules */}
-            <iframe 
+            <iframe
               title="Matrix Preview"
-              srcDoc={localHtml || `<html><body style="font-family: sans-serif; color: #94a3b8; text-align: center; margin-top: 50px;">Chưa có dữ liệu HTML...</body></html>`} 
+              srcDoc={localHtml || `<html><body style="font-family: sans-serif; color: #94a3b8; text-align: center; margin-top: 50px;">Chưa có dữ liệu HTML...</body></html>`}
               className="w-full h-full border-none"
               sandbox="allow-same-origin"
             />
