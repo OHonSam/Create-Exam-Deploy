@@ -32,19 +32,21 @@ THÔNG TIN NGỮ CẢNH:
 - Khối lớp: ${grade}
 - Loại kỳ thi: ${examType}
 - Thời lượng: ${duration} phút
-Hãy sử dụng ngữ cảnh này để nhận diện tên chương và bài học hợp lý, chính xác hơn.
+Hãy sử dụng ngữ cảnh này để nhận diện tên chương và bài học cần được chọn hợp lý, chính xác hơn.
 
 QUY TẮC XỬ LÝ (QUAN TRỌNG):
-1. Tính khái quát: Tài liệu có thể thuộc bất kỳ môn học nào. Nhóm chính có thể gọi là "Chương", "Chủ đề", "Phần", hoặc "Cụm chuyên đề". Hãy gán chúng thành \`chapterName\`.
-2. Khắc phục lỗi ngắt dòng: Các tên bài học, mục hoặc dòng text thường bị đứt gãy khi trích xuất từ PDF. Hãy đọc hiểu ngữ cảnh và ghép chúng lại thành một \`lessonName\` trôi chảy, logic.
-3. ID duy nhất: Khởi tạo \`id\` tự động và duy nhất cho từng đối tượng (Chương bắt đầu bằng "c" như "c1", "c2"... Bài học bắt đầu bằng "l" như "l1", "l2"...).
-4. Phân bổ tiết & tuần: Lấy chính xác số tiết (\`periods\`) của từng bài học và tính tổng số tiết (\`totalPeriods\`) của chương. Trích xuất chuỗi thời gian tuần học (\`week\`, ví dụ: "Tuần 1", "Tuần 2-3").
-5. Định dạng đầu ra: TRẢ VỀ DUY NHẤT ĐỊNH DẠNG JSON. Không markdown, không giải thích.
+1. Trích xuất toàn bộ: Trích xuất TOÀN BỘ các chương và bài học có trong tài liệu PPCT mà không bỏ sót. Nhóm chính gán thành \`chapterName\`.
+2. Khắc phục lỗi ngắt dòng: Ghép các dòng text bị đứt gãy thành một \`lessonName\` trôi chảy, logic.
+3. ID duy nhất: Khởi tạo \`id\` tự động (Chương bắt đầu bằng "c", Bài học bắt đầu bằng "l").
+4. Đánh giá độ phù hợp (selected): Dựa vào THÔNG TIN NGỮ CẢNH, hãy suy luận những bài học nào nằm trong phạm vi ôn thi hợp lý và thiết lập trường \`selected: true\`. Các bài học nằm ngoài phạm vi ngữ cảnh (ví dụ: bài học của học kỳ 2 nhưng kỳ thi là Giữa kỳ 1) thì thiết lập \`selected: false\`.
+5. Phân bổ tiết & tuần: Lấy chính xác số tiết (\`periods\`) và chuỗi thời gian tuần học (\`week\`).
+6. Định dạng đầu ra: TRẢ VỀ DUY NHẤT ĐỊNH DẠNG JSON. Xin đừng trả về markdown blocks, không giải thích.
 
 CẤU TRÚC JSON BẮT BUỘC:
 [
   {
     "id": "c1",
+    "subject": "Tên môn học",
     "chapterName": "Tên chương / Chủ đề 1",
     "totalPeriods": 4,
     "lessons": [
@@ -52,13 +54,15 @@ CẤU TRÚC JSON BẮT BUỘC:
         "id": "l1",
         "lessonName": "Tên bài học hoặc nội dung chi tiết 1",
         "periods": 2,
-        "week": "Tuần 1" 
+        "week": "Tuần 1",
+        "selected": true
       },
       {
         "id": "l2",
-        "lessonName": "Tên bài học hoặc nội dung chi tiết 2",
+        "lessonName": "Tên bài học hoặc nội dung ngoài phạm vi thi",
         "periods": 2,
-        "week": "Tuần 1-2" 
+        "week": "Tuần 15",
+        "selected": false
       }
     ]
   }

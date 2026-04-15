@@ -117,14 +117,7 @@ export default function ExamInfoForm({ onProcessSuccess }: ExamInfoFormProps) {
 
     return (
         <div className="bg-white rounded-2xl shadow-sm p-8">
-            {/* Block interactions while processing */}
-            {isProcessing && (
-                <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px] z-10 rounded-2xl flex flex-col items-center justify-center">
-                    <Loader2 className="w-10 h-10 text-teal-600 animate-spin mb-3" />
-                    <p className="text-teal-800 font-medium">AI đang phân tích tài liệu...</p>
-                </div>
-            )}
-
+            
             {/* Header */}
             <div className="flex items-center mb-8">
                 <div className="w-8 h-8 rounded-full bg-teal-700 text-white flex items-center justify-center font-bold mr-3">
@@ -231,16 +224,23 @@ export default function ExamInfoForm({ onProcessSuccess }: ExamInfoFormProps) {
                                 <X className="w-4 h-4" />
                             </button>
                         </div>
-                        <p className="text-xs text-teal-600 font-medium">Sẵn sàng trích xuất</p>
+
+                        {!isProcessing && <p className="text-xs text-teal-600 font-medium mb-2">Sẵn sàng trích xuất</p>}
 
                         <button
                             onClick={handleExtractData}
                             className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2.5 rounded-xl font-medium shadow-sm transition-colors flex items-center"
                         >
                             <Sparkles className="w-4 h-4 mr-2" />
-                            Tiến hành trích xuất
+                            {isProcessing ? 'Đang trích xuất...' : 'Tiến hành trích xuất'}
                         </button>
 
+                        {isProcessing && (
+                            <div className="mt-6 flex flex-col items-center justify-center animate-in fade-in slide-in-from-top-2">
+                                <Loader2 className="w-8 h-8 text-teal-600 animate-spin mb-3" />
+                                <p className="text-sm text-teal-800 font-medium">AI đang phân tích tài liệu...</p>
+                            </div>
+                        )}
                     </div>
                 ) : (
                     // UI when NO file is selected
