@@ -1,13 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
-export default function ExamStructureMatrix() {
+interface ExamStructureMatrixProps {
+    // You can define props here if needed, e.g. initial matrix data
+    onChange?: (matrix: any) => void;
+}
+
+export default function ExamStructureMatrix({ onChange }: ExamStructureMatrixProps) {
     const cols = ['Biết', 'Hiểu', 'Vận dụng', 'VD cao'];
-    const rows = [
-        { label: 'Dạng I (4 lựa chọn)', values: [8, 4, 0, 0] },
-        { label: 'Dạng II (Đúng/Sai)', values: [1, 1, 0, 0] },
-        { label: 'Dạng III (Trả lời ngắn)', values: [1, 1, 2, 0] },
-        { label: 'Tự luận', values: [0, 0, 0, 0] },
-    ];
+    const [rows, setRows] = useState([
+        { id: 'I', label: 'Dạng I (4 lựa chọn)', values: [8, 4, 0, 0] },
+        { id: 'II', label: 'Dạng II (Đúng/Sai)', values: [1, 1, 0, 0] },
+        { id: 'III', label: 'Dạng III (Trả lời ngắn)', values: [1, 1, 2, 0] },
+        { id: 'TL', label: 'Tự luận', values: [0, 0, 0, 0] },
+    ]);
+
+    useEffect(() => {
+        onChange?.(rows);
+    }, [rows]);
+
+    const handleInputChange = (rowIndex: number, colIndex: number, newValue: string) => {
+        const val = parseInt(newValue) || 0;
+        const newRows = [...rows];
+        newRows[rowIndex].values[colIndex] = val;
+        setRows(newRows);
+    };
 
     return (
         <div className="bg-white rounded-2xl shadow-sm p-8">
@@ -40,6 +56,7 @@ export default function ExamStructureMatrix() {
                                         type="number"
                                         defaultValue={val}
                                         min="0"
+                                        onChange={(e) => handleInputChange(rowIndex, colIndex, e.target.value)}
                                         className="w-full border border-teal-100 rounded-xl px-3 py-2.5 text-center text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors"
                                     />
                                 </div>

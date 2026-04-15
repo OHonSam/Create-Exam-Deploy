@@ -20,9 +20,10 @@ interface Chapter {
 
 interface TopicSelectionProps {
   data: Chapter[];
+  onSelectionChange?: (selectedIds: string[]) => void;
 }
 
-export default function TopicSelection({ data }: TopicSelectionProps) {
+export default function TopicSelection({ data, onSelectionChange }: TopicSelectionProps) {
   // State to track which chapters are expanded/collapsed
   const [expandedChapters, setExpandedChapters] = useState<string[]>(
     data.map(c => c.id)
@@ -42,6 +43,7 @@ export default function TopicSelection({ data }: TopicSelectionProps) {
       });
     });
     setSelectedLessons(defaultSelected);
+    onSelectionChange?.(defaultSelected);
   }, [data]);
 
   const toggleChapterView = (chapterId: string) => {
@@ -51,9 +53,11 @@ export default function TopicSelection({ data }: TopicSelectionProps) {
   };
 
   const toggleLesson = (lessonId: string) => {
-    setSelectedLessons(prev =>
-      prev.includes(lessonId) ? prev.filter(id => id !== lessonId) : [...prev, lessonId]
-    );
+    setSelectedLessons(prev => {
+      const newSelected = prev.includes(lessonId) ? prev.filter(id => id !== lessonId) : [...prev, lessonId];
+      onSelectionChange?.(newSelected);
+      return newSelected;
+    });
   };
 
   const toggleChapterSelection = (chapter: Chapter) => {
@@ -67,7 +71,9 @@ export default function TopicSelection({ data }: TopicSelectionProps) {
       // If none or some are selected, select them all
       setSelectedLessons(prev => {
         const newSelected = new Set([...prev, ...lessonIds]);
-        return Array.from(newSelected);
+        const finalArr = Array.from(newSelected);
+        onSelectionChange?.(finalArr); // <--- NOTIFY PARENT
+        return finalArr;
       });
     }
   };
@@ -120,7 +126,7 @@ export default function TopicSelection({ data }: TopicSelectionProps) {
                 </button>
 
                 <span className="font-semibold text-teal-900 flex-1">{chapter.chapterName}</span>
-                
+
                 <span className="text-xs font-medium bg-teal-100 text-teal-700 px-2.5 py-1 rounded-full">
                   {chapter.totalPeriods} tiết
                 </span>

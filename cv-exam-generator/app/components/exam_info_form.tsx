@@ -98,7 +98,7 @@ export default function ExamInfoForm({ onProcessSuccess }: ExamInfoFormProps) {
             formData.append('grade', grade);
             formData.append('examType', examType);
             formData.append('duration', duration);
-            const response = await fetch('/api/extract', {
+            const response = await fetch('/api/extract_distribution', {
                 method: 'POST',
                 body: formData
             });
@@ -117,7 +117,7 @@ export default function ExamInfoForm({ onProcessSuccess }: ExamInfoFormProps) {
 
     return (
         <div className="bg-white rounded-2xl shadow-sm p-8">
-            
+
             {/* Header */}
             <div className="flex items-center mb-8">
                 <div className="w-8 h-8 rounded-full bg-teal-700 text-white flex items-center justify-center font-bold mr-3">
